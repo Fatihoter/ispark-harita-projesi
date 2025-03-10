@@ -21,13 +21,14 @@
 
 ## 📸 Uygulama Ekran Görüntüleri
 
+## 📸 Uygulama Ekran Görüntüleri
+
 ![Ana Ekran](screenshots/Ana_Ekran.png)
 ![Ana Harita Ekranı](screenshots/Ana_Harita_Ekranı.png)
 ![İlçe Bazlı Harita Filtreleme](screenshots/İlçe_Bazlı_Harita_Filtreleme.png)
 ![Otopark Listeleme ve Sorgulama](screenshots/Otopark_Listeleme_ve_Sorgulama.png)
 ![Otoparka Rota](screenshots/Otoparka_Rota.png)
-![Otoparka Rota-2](screenshots/Otoparka_Rota-2.png)![Uploading Otopark Listeleme ve Sorgulama.png…]()
-![İlçe Bazlı Harita Filtreleme](https://github.com/user-attachments/assets/75ad82dd-963c-4cfb-8b00-352b1f60ffa9)
+![Otoparka Rota-2](screenshots/Otoparka_Rota-2.png)
 
 
 ## 🌐 Veri Kaynağı
