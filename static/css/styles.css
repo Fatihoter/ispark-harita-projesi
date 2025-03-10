@@ -1,0 +1,102 @@
+/* General reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html,
+body {
+    height: 100%;
+    margin: 0;
+}
+
+label,
+input {
+    margin: 10px;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+li {
+    margin: 30px;
+    text-align: left;
+    bottom: 0;
+    right: 0;
+    width: auto;
+}
+
+.container {
+    margin: 20px;
+}
+
+/* Footer styling */
+.footer {
+    padding: 10px;
+    text-align: right;
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    width: auto;
+}
+
+/* Flash message styling */
+.flash-message {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    z-index: 1000;
+    padding: 10px;
+    border-radius: 5px;
+    opacity: 1;
+    transition: opacity 0.5s ease-in-out;
+}
+
+.flash-message.hide {
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+}
+
+/* Table styling */
+.table-hover {
+    border-collapse: collapse;
+    /* Ensure borders collapse into a single border */
+    width: 100%;
+    /* Ensure the table takes full width of its container */
+}
+
+.table-hover th,
+.table-hover td {
+    border: 1px solid #ddd;
+    /* Light border for table cells */
+    padding: 8px;
+    /* Padding inside each cell */
+    text-align: left;
+    /* Aligns text to the left */
+}
+
+.table-hover thead th {
+    background-color: #000000;
+    /* Background color for table headers */
+    color: #fff;
+    /* Text color for table headers */
+    text-align: center;
+}
+
+#centered{
+    text-align: center;
+}
+
+/* Hover effect for table rows */
+.table-hover tbody tr:hover {
+    background-color: #e5eb29;
+    /* Highlight background color on hover */
+    color: white;
+    /* Text color on hover */
+    cursor: pointer;
+    /* Changes the cursor to a pointer to indicate it's clickable */
+}

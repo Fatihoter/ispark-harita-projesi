@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giriş Sayfası</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <header>
+        <img src="/static/ispark-logo-square.png" alt="Ispark Logo" style="height: 150px;">
+    </header>
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        header {
+            background-color: #ffffff;
+            padding: 10px;
+            text-align: center;
+            color: white;
+        }
+
+        .container {
+            padding: 20px;
+            text-align: center;
+        }
+
+        .menu {
+            margin-top: 20px;
+            background-color: #005ea1;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .menu a {
+            margin: 0 10px;
+            text-decoration: none;
+            color: white;
+            padding: 10px;
+            font-size: 16px;
+            display: inline-block;
+        }
+
+        .menu a:hover {
+            background-color: hsl(204, 100%, 31%);
+            border-radius: 5px;
+        }
+
+        h1 {
+            color: #005ea1;
+            margin-bottom: 10px;
+        }
+
+        p {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            color: white;
+            background-color: #005ea1;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        button:hover {
+            background-color: hsl(204, 100%, 31%);
+        }
+
+        footer {
+            background-color: #005ea1;
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+
+    <div class="container">
+        <h2>Ana Sayfa</h2>
+        <p>İspark sistemine hoş geldiniz! Haritada park yerlerini görüntüleyin veya İSPARK verilerini inceleyin.</p>
+        
+        <div class="menu">
+            <a href="/">Giriş</a>
+            <a href="/isparks">İSPARKLAR</a>
+            <a href="/map">Harita</a>
+        </div>
+
+        <button onclick="location.href='/isparks'">İSPARK Verilerine Göz At</button>
+        <button onclick="location.href='/map'">Haritaya Git</button>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 İspark Sistemi. Tüm hakları saklıdır.</p>
+    </footer>
+
+</body>
+</html>

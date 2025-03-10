@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>İSPARKLAR</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+    
+        .menu {
+            background-color: #005ea1;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+        }
+    
+        .menu a {
+            margin-right: 10px;
+            text-decoration: none;
+            color: white;
+            padding: 10px;
+            font-size: 16px;
+        }
+    
+        .menu a:hover {
+            background-color: hsl(204, 100%, 31%);
+            border-radius: 5px;
+        }
+    
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+    
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+    
+        th {
+            background-color: #005ea1;
+            color: white;
+            font-weight: bold;
+        }
+    
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+    
+        tr:nth-child(odd) {
+            background-color: #ffffff;
+        }
+    
+        tr:hover {
+            background-color: #d1e7fd; /* Satır üzerine gelindiğinde arka plan rengi */
+        }
+    
+        .search-container {
+            margin: 20px;
+            display: flex;
+            justify-content: space-between;
+        }
+    
+        .search-container label {
+            margin-right: 10px;
+            font-weight: bold;
+        }
+    
+        .search-container input[type="text"], .search-container select {
+            padding: 8px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+    
+        .search-container button {
+            padding: 8px 16px;
+            font-size: 16px;
+            background-color: #005ea1;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    
+        .search-container button:hover {
+            background-color: hsl(204, 100%, 31%);
+        }
+    </style>
+</head>
+<body>
+    <h1>İSPARKLAR</h1>
+    <div class="menu">
+        <a href="/">Giriş</a>
+        <a href="/isparks">İSPARKLAR</a>
+        <a href="/map">Harita</a>
+    </div>
+    
+    <form id="search-form" class="search-container">
+        <div>
+            <label for="county">County:</label>
+            <select id="county" name="county">
+                <option value="">Select County</option>
+                <!-- İlçeler buraya eklenecek -->
+            </select>
+        </div>
+        <div>
+            <label for="park-name">Park Name:</label>
+            <input type="text" id="park-name" name="park-name" placeholder="Enter park name">
+        </div>
+        <button type="submit">Search</button>
+    </form>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Park Name</th>
+                <th>Park Type</th>
+                <th>Capacity</th>
+                <th>Empty Capacity</th>
+                <th>Working Time</th>
+                <th>County</th>
+                <th>Longitude</th>
+                <th>Latitude</th>
+            </tr>
+        </thead>
+        <tbody id="data-table-body">
+            <!-- Veriler buraya eklenecek -->
+        </tbody>
+    </table>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const countySelect = document.getElementById('county');
+            const parkNameInput = document.getElementById('park-name');
+
+            fetch('/counties')
+                .then(response => response.json())
+                .then(counties => {
+                    counties.forEach(county => {
+                        const option = document.createElement('option');
+                        option.value = county;
+                        option.textContent = county;
+                        countySelect.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error fetching counties:', error));
+
+            const form = document.getElementById('search-form');
+            form.addEventListener('submit', function(event) {
+                event.preventDefault();
+                const county = countySelect.value;
+                const parkName = parkNameInput.value.trim();
+                fetchData(county, parkName);
+            });
+
+            fetchData();
+
+            function fetchData(county = '', parkName = '') {
+                let url = `/data?county=${county}`;
+                if (parkName) {
+                    url += `&parkName=${parkName}`;
+                }
+
+                fetch(url)
+                    .then(response => response.json())
+                    .then(data => {
+                        const tableBody = document.getElementById('data-table-body');
+                        tableBody.innerHTML = ''; // Mevcut tabloyu temizle
+
+                        data.forEach(row => {
+                            const tr = document.createElement('tr');
+                            const tdId = document.createElement('td');
+                            tdId.textContent = row.ParkID;
+                            const tdParkName = document.createElement('td');
+                            tdParkName.textContent = row.ParkName;
+                            const tdParkType = document.createElement('td');
+                            tdParkType.textContent = row.ParkType;
+                            const tdCapacity = document.createElement('td');
+                            tdCapacity.textContent = row.Capacity;
+                            const tdEmptyCapacity = document.createElement('td');
+                            tdEmptyCapacity.textContent = row.EmptyCapacity;
+                            const tdWorkingTime = document.createElement('td');
+                            tdWorkingTime.textContent = row.WorkHours;
+                            const tdCounty = document.createElement('td');
+                            tdCounty.textContent = row.District;
+                            const tdLongitude = document.createElement('td');
+                            tdLongitude.textContent = row.Longitude;
+                            const tdLatitude = document.createElement('td');
+                            tdLatitude.textContent = row.Latitude;
+                            tr.appendChild(tdId);
+                            tr.appendChild(tdParkName);
+                            tr.appendChild(tdParkType);
+                            tr.appendChild(tdCapacity);
+                            tr.appendChild(tdEmptyCapacity);
+                            tr.appendChild(tdWorkingTime);
+                            tr.appendChild(tdCounty);
+                            tr.appendChild(tdLongitude);
+                            tr.appendChild(tdLatitude);
+                            tableBody.appendChild(tr);
+                        });
+                    })
+                    .catch(error => console.error('Error fetching data:', error));
+            }
+        });
+    </script>
+</body>
+</html>

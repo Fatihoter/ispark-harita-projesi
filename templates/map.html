@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Isparks Map</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+    <!-- Leaflet Routing Machine JS -->
+    <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
+<!-- Load Leaflet -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+
+<!-- Load Leaflet.markercluster -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+<script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+
+
+<!-- Leaflet.markercluster JS -->
+
+    <style>
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+.menu {
+    background-color: #005ea1;
+    padding: 10px;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.menu a {
+    margin-right: 10px;
+    text-decoration: none;
+    color: white;
+    padding: 10px;
+    font-size: 16px;
+}
+
+.menu a:hover {
+    background-color: hsl(204, 100%, 31%);
+    border-radius: 5px;
+}
+
+#map {
+    height: calc(100vh - 70px); /* Haritanın tam sığması için yükseklik ayarı */
+    width: 100%;
+    margin-top: 10px;
+    position: relative;
+    font-family: 'Arial', sans-serif; /* Daha yumuşak bir font ekledik */
+}
+
+h1 {
+    color: #005ea1;
+    text-align: center;
+    margin: 0; /* Başlığın harita ile birleşmesini önlemek için */
+    padding: 10px 0; /* Başlık altında ve üstünde boşluk bırak */
+    font-size: 24px; /* Başlık boyutunu büyüt */
+}
+
+.sidebar {
+    position: absolute;
+    top: 60px;
+    left: 10px;
+    background: white;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+}
+
+.sidebar label {
+    margin-right: 10px;
+}
+
+.sidebar select {
+    margin-right: 10px;
+}
+
+.leaflet-control-container {
+    z-index: 500;
+}
+
+.location-icon, .nearest-ispark {
+    position: absolute;
+    left: 10px;
+    background: white;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+    cursor: pointer;
+    z-index: 1000;
+}
+
+.location-icon {
+    top: 195px;
+}
+
+.nearest-ispark {
+    top: 240px;
+}
+
+.location-marker {
+    width: 20px;
+    height: 20px;
+    border: 5px solid rgba(0, 0, 255, 0.5);
+    border-radius: 50%;
+    background-color: blue;
+    opacity: 0.7;
+}
+
+.leaflet-routing-container {
+    background-color: white !important;
+    color: black !important;
+    padding: 15px; /* Daha geniş bir padding */
+    border-radius: 12px; /* Köşe yuvarlamasını biraz daha artırdık */
+    font-size: 14px; /* Font boyutunu biraz artırdık */
+    max-width: 320px; /* Genişliği biraz artırdık */
+    max-height: 400px; /* Yüksekliği biraz artırdık */
+    overflow-y: auto;
+    overflow-x: hidden;
+    position: fixed;
+    bottom: 20px; /* Sağ altta konumlandırmak için */
+    right: 20px;
+    z-index: 10002; /* Info-box'ın üstünde olacak şekilde z-index ayarlandı */
+    text-align: left; /* Metinleri sola hizaladık */
+}
+.leaflet-routing-container h2 {
+    margin: 0 0 10px; /* Varsayılan margin ayarı */
+    font-size: 18px; /* Font boyutu */
+    color: #333; /* Yazı rengi */
+    padding-right: 20px; /* Sağdan boşluk eklemek için padding */
+    max-width: 90%; /* Başlığın maksimum genişliğini ayarlayın */
+}
+
+.leaflet-popup-content-wrapper {
+    background-color: #fff;
+    padding: 8px; /* İçeriğin etrafındaki boşluğu küçült */
+    border-radius: 6px; /* Köşeleri biraz daha az yuvarla */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    font-size: 12px; /* Yazı boyutunu biraz küçült */
+}
+
+.leaflet-popup-content-wrapper h2 {
+    margin: 0 0 10px;
+    font-size: 16px; /* Başlık boyutunu küçülttük */
+    color: #333;
+    padding-right: 50px; /* Sağdan daha fazla boşluk ekledik */
+    max-width: 85%; /* Başlığın sağdan daha erken bitmesi için genişliği sınırlandırdık */
+    word-wrap: break-word; /* Başlığın genişliği aşıldığında kelime kaydır */
+}
+
+.leaflet-popup-close-button {
+    top: 8px; /* Üstten daha fazla boşluk ekledik */
+    right: 8px; /* Sağdan daha fazla boşluk ekledik */
+    width: 20px; /* Çarpı genişliği */
+    height: 20px; /* Çarpı yüksekliği */
+    line-height: 20px; /* Çarpı içinde dikey hizalama */
+    font-size: 20px; /* Çarpı boyutunu biraz küçülttük */
+    background-color: transparent; /* Arka planı şeffaf yap */
+}
+
+
+
+.leaflet-popup-content {
+    margin: 0;
+    padding: 0;
+}
+
+.leaflet-popup-tip {
+    background: #fff;
+}
+
+
+
+.leaflet-control {
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15); /* Kontrol butonlarının gölgesini belirginleştirdik */
+    background-color: #ffffff; /* Arka plan rengini biraz daha açık yaptık */
+}
+
+.leaflet-control-attribution {
+    font-size: 12px;
+    color: #666; /* Açıklama metni rengini biraz daha açık yaptık */
+}
+
+.leaflet-routing-container .leaflet-routing-alt span:last-child {
+    white-space: nowrap; /* Metnin satır kaydırmasını engeller */
+    font-weight: bold; /* Metni kalın yapar */
+    color: black; /* Rengi siyah yapar */
+}
+
+
+#info-box {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    background-color: #ffffff;
+    border-radius: 10px; /* Yuvarlatılmış köşeler */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Gölge ekledik */
+    padding: 10px;
+    z-index: 10000;
+    width: 320px;
+    max-height: 400px; /* Biraz daha yüksekliği artırdık */
+    overflow-y: auto;
+    font-family: Arial, sans-serif;
+    font-size: 14px; /* Font boyutunu artırdık */
+}
+
+#info-box h2 {
+    margin: 0 0 10px; /* Varsayılan margin ayarı */
+    font-size: 18px; /* Font boyutu */
+    color: #333; /* Yazı rengi */
+    padding-right: 20px; /* Sağdan boşluk eklemek için padding */
+    max-width: 90%; /* Başlığın maksimum genişliğini ayarlayın */
+}
+
+
+#info-box table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 15px; /* Buton ile tablo arasına daha fazla mesafe eklemek için */
+}
+
+
+#info-box td {
+    padding: 4px 15px;
+    vertical-align: top;
+}
+
+#info-box td:first-child {
+    font-weight: bold;
+    color: #444;
+    text-align: right;
+    padding-right: 10px;
+}
+
+#info-box td:last-child {
+    color: #555;
+    text-align: left;
+}
+
+.route-btn, .close-button {
+    background-color: #005ea1;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 15px; /* Butonun boyutunu biraz artırdık */
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+    display: block; /* Butonu tam genişlikte olacak şekilde ayarladık */
+    margin-top: 8px; /* Butonun üst kısmına ekstra boşluk ekledik */
+}
+
+.route-btn:hover, .close-button:hover {
+    background-color: #003e70;
+}
+
+#info-box .close-button,
+.leaflet-routing-container .close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 20px; /* Boyut ayarı */
+    height: 20px;
+    background-color: #e60000; /* Kırmızı arka plan rengi */
+    color: #ffffff; /* Beyaz yazı rengi */
+    border: none;
+    cursor: pointer;
+    font-size: 14px; /* Kare kapatma butonu için boyut ayarı */
+    line-height: 20px;
+    text-align: center;
+    padding: 0;
+    border-radius: 3px; /* Kare hale getirmek için köşe yuvarlamayı kaldırdık */
+}
+
+
+/* Marker cluster stilleri */
+
+
+.marker-cluster-icon {
+    background: #0078D7;
+    color: white;
+    border-radius: 50%;
+    text-align: center;
+    font-size: 14px;
+    line-height: 40px;
+    width: 40px;
+    height: 40px;
+    border: 2px solid white;
+}
+
+
+/* Marker cluster hover efekti */
+.marker-cluster:hover {
+    background-color: rgba(0, 122, 255, 1); /* Daha yoğun mavi */
+    cursor: pointer; /* El işareti */
+}
+
+
+/* Harita arayüzündeki diğer ögeler */
+.leaflet-container {
+    background-color: #f0f8ff; /* Hafif mavi arka plan */
+}
+
+.leaflet-popup-content-wrapper {
+    background-color: #fff; /* Beyaz arka plan */
+    border-radius: 8px; /* Köşe yuvarlama */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2); /* Gölge efekti */
+}
+
+.leaflet-popup-content {
+    font-size: 14px; /* Metin boyutu */
+    color: #333; /* Metin rengi */
+}
+
+
+/* Zoom düğmeleri ve diğer kontrol elemanları */
+.leaflet-bar a {
+    background-color: #005ea1; /* Mavi düğmeler */
+    color: white; /* Beyaz simgeler */
+    border: none;
+}
+
+.leaflet-bar a:hover {
+    background-color: #003e70; /* Daha koyu mavi */
+}
+
+/* Styling for the search container on the right */
+.search-container, .filter-container {
+    position: absolute;
+    top: 10px;
+    display: flex;
+    align-items: center;
+    z-index: 1000;
+}
+
+.search-container {
+    right: 10px; /* Sağa yaslı */
+}
+
+.filter-container {
+    left: 10px; /* Sola yaslı */
+}
+
+input, select {
+    padding: 8px; /* Eşit padding */
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+button {
+    margin-left: 8px; /* Eşit margin */
+    padding: 8px 16px;
+    font-size: 14px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </style>
+
+
+
+    </head>
+    <body>
+        <h1>Isparks Map</h1>
+        <div class="menu">
+            <a href="/">Giriş</a>
+            <a href="/isparks">İSPARKLAR</a>
+            <a href="/map">Harita</a>
+        </div>
+        <div id="map"></div>
+        <div class="sidebar">
+            <label for="county-select">Select County:</label>
+            <select id="county-select">
+                <option value="">All</option>
+            </select>
+            <button id="filter-btn">Filter</button>
+        </div>
+        <div class="location-icon" id="locate-me">
+            <i class="fas fa-location-arrow"></i>
+        </div>
+        <div class="nearest-ispark" id="nearest-ispark">
+            <i class="fas fa-parking"></i>
+        </div>
+        <div class="search-container">
+            <input type="text" id="search-input" placeholder="Park adı ara..." />
+            <button id="search-btn">Ara</button>
+        </div>
+        
+        
+    
+        <div id="info-box" style="display: none;">
+            <button id="close-info-box" class="close-button">X</button>
+            <h2 id="info-title"></h2>
+            <table>
+                <tr>
+                    <td>Konum Adı:</td>
+                    <td id="info-location-name"></td>
+                </tr>
+                <tr>
+                    <td>Park ID:</td>
+                    <td id="info-park-id"></td>
+                </tr>            
+                <tr>
+                    <td>Konum:</td>
+                    <td id="info-location"></td>
+                </tr>
+                <tr>
+                    <td>Latitude:</td>
+                    <td id="info-latitude"></td>
+                </tr>
+                <tr>
+                    <td>Longitude:</td>
+                    <td id="info-longitude"></td>
+                </tr>    
+                <tr>
+                    <td>Doluluk Oranı:</td>
+                    <td id="info-occupancy-rate"></td>
+                </tr>
+                <tr>
+                    <td>Toplam Kapasite:</td>
+                    <td id="info-capacity"></td>
+                </tr>
+                <tr>
+                    <td>Boş Kapasite:</td>
+                    <td id="info-empty-capacity"></td>
+                </tr>
+                <tr>
+                    <td>Çalışma Saatleri:</td>
+                    <td id="info-work-hours"></td>
+                </tr>
+                <tr>
+                    <td>Park Tipi:</td>
+                    <td id="info-park-type"></td>
+                </tr>
+                <tr>
+                    <td>Tarife:</td>
+                    <td id="info-tariff"></td>
+                </tr>
+                <tr>
+                    <td>İlçe:</td>
+                    <td id="info-district"></td>
+                </tr>
+                <tr>
+                    <td>Ücretsiz Süre:</td>
+                    <td id="info-free-time"></td>
+                </tr>
+                <tr>
+                    <td>Aylık Ücret:</td>
+                    <td id="info-monthly-fee"></td>
+                </tr>
+                <tr>
+                    <td>Güncelleme:</td>
+                    <td id="info-update-date"></td>
+                </tr>
+            </table>
+        </div>
+    </body>
+    
+    
+
+
+
+
+</style>
+
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/@turf/turf/turf.min.js"></script>
+    <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script> <!-- Leaflet Routing Machine -->
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const map = L.map('map', {
+                center: [41.0082, 28.9784], // İstanbul koordinatları
+                zoom: 10,
+                closePopupOnClick: false, // Popup'ların tıklamayla kapanmasını engeller
+                layers: [
+                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                    })
+                ]
+            });
+
+            let userMarker;
+            let userCircle;
+            let markers = [];
+            let geojsonLayer;
+            let routingControl;
+
+            // Konum işaretleyici butonuna tıklama olayını dinle
+document.getElementById('locate-me').addEventListener('click', function() {
+    map.locate({ setView: true, maxZoom: 16 });
+});
+
+function onLocationFound(e) {
+    const radius = 1000; // 1 km yarıçap
+
+    if (userMarker) {
+        map.removeLayer(userMarker);
+    }
+    if (userCircle) {
+        map.removeLayer(userCircle);
+    }
+
+    userMarker = L.marker(e.latlng, { icon: L.divIcon({ className: 'location-marker' }) }).addTo(map);
+    userCircle = L.circle(e.latlng, { radius: radius }).addTo(map);
+
+    // Kullanıcı konumunu kullanarak çevredeki 1 km içindeki İSPARK'ları bulma işlemi burada devam ediyor
+}
+
+
+            // Kullanıcı konumu bulunamazsa
+            function onLocationError(e) {
+                alert(e.message);
+            }
+
+            map.on('locationfound', onLocationFound);
+            map.on('locationerror', onLocationError);
+
+            // İlçeleri yükle ve dropdown'a ekle
+            fetch('/counties')
+                .then(response => response.json())
+                .then(counties => {
+                    const countySelect = document.getElementById('county-select');
+                    counties.forEach(county => {
+                        const option = document.createElement('option');
+                        option.value = county;
+                        option.textContent = county;
+                        countySelect.appendChild(option);
+                    });
+                });
+
+            // Tüm otoparkları yükle ve haritaya ekle
+            function loadAllData() {
+                fetch('/data')
+                    .then(response => response.json())
+                    .then(data => {
+                        addMarkers(data);
+                    });
+            }
+
+            // İlçe bazında otopark verisi yükleme
+            function loadCountyData(county) {
+                fetch(`/data?county=${county}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        addMarkers(data);
+                    });
+            }
+
+const isparkIcon = L.icon({
+    iconUrl: 'static/isparkmarker.png', // İkonun URL'si
+    iconSize: [32, 32], // İkonun boyutları
+    iconAnchor: [16, 32], // İkonun haritadaki anchor noktası (ikonun alt merkezi)
+    popupAnchor: [0, -32]  // Pop-up'ın ikonun üstünde açılmasını sağlar
+});
+
+
+function addMarkers(data) {
+    // Var olan markerları temizle
+    markers.forEach(marker => map.removeLayer(marker));
+    markers = [];
+
+    const countyGroups = {}; // İlçelere göre gruplamak için
+
+    data.forEach(row => {
+        if (!countyGroups[row.District]) {
+            countyGroups[row.District] = [];
+        }
+        countyGroups[row.District].push(row);
+    });
+
+    const mapZoom = map.getZoom();
+
+    if (mapZoom < 10) {
+        // Tüm İstanbul'u kapsayan tek bir marker
+        const bounds = data.map(row => [row.Latitude, row.Longitude]);
+        const center = L.latLngBounds(bounds).getCenter();
+
+        const marker = L.marker(center, {
+            icon: L.divIcon({
+                html: `<div class="marker-cluster">${data.length}</div>`,
+                className: 'marker-cluster-icon',
+                iconSize: L.point(50, 50)
+            })
+        }).addTo(map);
+
+        marker.on('click', function() {
+            map.setZoom(10); // İlçe bazlı görünüme yakınlaştır
+        });
+
+        markers.push(marker);
+
+    } else if (mapZoom >= 10 && mapZoom < 12) {
+        // İlçe bazlı markerlar
+        Object.keys(countyGroups).forEach(county => {
+            const group = countyGroups[county];
+            const bounds = group.map(row => [row.Latitude, row.Longitude]);
+            const center = L.latLngBounds(bounds).getCenter();
+
+            const marker = L.marker(center, {
+                icon: L.divIcon({
+                    html: `<div class="marker-cluster">${group.length}</div>`,
+                    className: 'marker-cluster-icon',
+                    iconSize: L.point(40, 40)
+                })
+            }).addTo(map);
+
+            marker.on('click', function() {
+                map.fitBounds(L.latLngBounds(bounds));
+            });
+
+            markers.push(marker);
+        });
+    } else {
+        // Tek tek otopark markerları
+        Object.keys(countyGroups).forEach(county => {
+            countyGroups[county].forEach(row => {
+                const marker = L.marker([row.Latitude, row.Longitude], { icon: isparkIcon })
+                    .bindPopup(`
+                        <b>${row.ParkName}</b><br>${row.WorkHours}<br>${row.District}<br>
+                        <br><button class="route-btn" data-lat="${row.Latitude}" data-lng="${row.Longitude}" data-id="${row.ParkID}">Yol Tarifi Al</button>
+                    `)
+                    .on('popupopen', function(e) {
+                        // Diğer markerları gizle
+                        markers.forEach(m => {
+                            if (m !== marker) {
+                                map.removeLayer(m);
+                            }
+                        });
+
+                        if (routingControl) {
+                            map.removeControl(routingControl);
+                            routingControl = null;
+                        }
+
+                        const routeButton = e.popup._contentNode.querySelector('.route-btn');
+                        routeButton.addEventListener('click', function() {
+                            const destLat = this.getAttribute('data-lat');
+                            const destLng = this.getAttribute('data-lng');
+                            const parkId = this.getAttribute('data-id');
+
+                            if (!userMarker) {
+                                alert('Lütfen önce konumunuzu belirleyin.');
+                                return;
+                            }
+
+                            routingControl = L.Routing.control({
+                                waypoints: [
+                                    userMarker.getLatLng(),
+                                    L.latLng(destLat, destLng)
+                                ],
+                                router: L.Routing.osrmv1({
+                                    serviceUrl: 'https://router.project-osrm.org/route/v1'
+                                }),
+                                lineOptions: {
+                                    styles: [{ color: 'blue', opacity: 0.6, weight: 6 }]
+                                },
+                                language: 'en',
+                                show: true,
+                                addWaypoints: false,
+                                createMarker: function() { return null; },
+                                routeWhileDragging: false,
+                                draggableWaypoints: false,
+                                formatter: new L.Routing.Formatter({
+                                    language: 'en',
+                                    units: 'metric',
+                                    roundingSensitivity: 1
+                                })
+                            }).addTo(map);
+
+                            addCloseButtonToRoutingContainer();
+                            showParkDetails(parkId);
+                        });
+
+                        showParkDetails(row.ParkID);
+                    }).addTo(map);
+
+                markers.push(marker);
+            });
+        });
+    }
+}
+
+
+// Zoom seviyesine göre markerları güncelle
+map.on('zoomend', function() {
+    loadAllData(); // Zoom seviyesi değiştiğinde markerları yeniden yükle
+});
+
+// İlk yüklemede veriyi yükle ve gruplandır
+loadAllData();
+
+
+
+
+
+
+
+function addCloseButtonToRoutingContainer() {
+    setTimeout(function() { 
+        const routingContainer = document.querySelector('.leaflet-routing-container');
+        if (routingContainer) {
+            const closeButton = document.createElement('button');
+            closeButton.innerHTML = 'X';
+            closeButton.className = 'close-button'; // Sınıf adı ekledik
+            closeButton.style.position = 'absolute';
+            closeButton.style.top = '10px';
+            closeButton.style.right = '10px';
+            closeButton.style.width = '30px';  // Buton genişliği
+            closeButton.style.height = '30px'; // Buton yüksekliği
+            closeButton.style.backgroundColor = '#f00'; // Arkaplan rengi
+            closeButton.style.color = '#fff'; // Yazı rengi
+            closeButton.style.border = 'none'; // Kenarlık yok
+            closeButton.style.borderRadius = '10px'; // Yuvarlak köşeler
+            closeButton.style.padding = '5px';
+            closeButton.style.cursor = 'pointer';
+            closeButton.style.fontSize = '16px';
+
+            closeButton.addEventListener('click', function() {
+                console.log('Close button clicked. Removing routing control...');
+                if (routingControl) {
+                    map.removeControl(routingControl);
+                    routingControl = null;
+                }
+            });
+
+            routingContainer.appendChild(closeButton);
+            console.log('Close button added to routing container.');
+        }
+    }, 100); 
+}
+
+document.getElementById('locate-me').addEventListener('click', function() {
+    map.locate({ setView: true, maxZoom: 16 });
+    console.log('User location requested.');
+});
+
+// Park detaylarını gösteren işlev
+function showParkDetails(parkId) {
+    const url = `https://api.ibb.gov.tr/ispark/ParkDetay?id=${parkId}`;
+
+    fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            if (data && data.length > 0) {
+                const park = data[0];
+                const occupancyRate = (park.capacity - park.emptyCapacity) / park.capacity * 100;
+
+                document.getElementById('info-location-name').innerText = park.locationName;
+                document.getElementById('info-park-id').innerText = park.parkID;
+                document.getElementById('info-title').innerText = park.parkName;
+                document.getElementById('info-location').innerText = park.address;
+                document.getElementById('info-latitude').innerText = park.lat;
+                document.getElementById('info-longitude').innerText = park.lng;
+                document.getElementById('info-capacity').innerText = park.capacity;
+                document.getElementById('info-empty-capacity').innerText = park.emptyCapacity;
+                document.getElementById('info-work-hours').innerText = park.workHours;
+                document.getElementById('info-park-type').innerText = park.parkType;
+                document.getElementById('info-tariff').innerText = park.tariff.replace(/;/g, ', ');
+                document.getElementById('info-district').innerText = park.district;
+                document.getElementById('info-free-time').innerText = `${park.freeTime} dakika`;
+                document.getElementById('info-monthly-fee').innerText = `${park.monthlyFee} TL`;
+                document.getElementById('info-update-date').innerText = park.updateDate;
+                document.getElementById('info-occupancy-rate').innerText = `${occupancyRate.toFixed(2)}%`;
+
+                document.getElementById('info-box').style.display = 'block';
+            } else {
+                alert('Park detayları bulunamadı.');
+            }
+        })
+        .catch(error => {
+            console.error('Park detayları alınırken hata oluştu:', error);
+            alert('Park detayları alınırken bir hata oluştu.');
+        });
+}
+
+function hideInfoBox() {
+    document.getElementById('info-box').style.display = 'none';
+}
+
+// Info box'ı kapatmak için kapatma butonunu ekliyoruz
+document.getElementById('close-info-box').addEventListener('click', function() {
+    hideInfoBox();
+});
+
+// Haritaya tıklanıldığında info box'ı kapat
+map.on('click', function() {
+    hideInfoBox();
+});
+
+// Info box dışında herhangi bir yere tıklanıldığında info box'ı kapat
+document.addEventListener('click', function(event) {
+    const infoBox = document.getElementById('info-box');
+    if (!infoBox.contains(event.target) && infoBox.style.display === 'block') {
+        hideInfoBox();
+    }
+});
+
+
+
+
+
+            // İlk yüklemede tüm otoparkları yükle
+            loadAllData();
+
+            function highlightFeature(e) {
+                var layer = e.target;
+
+                layer.setStyle({
+                    weight: 5,
+                    color: '#666',
+                    dashArray: '',
+                    fillOpacity: 0.7
+                });
+
+                if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+                    layer.bringToFront();
+                }
+            }
+
+            function resetHighlight(e) {
+                geojsonLayer.resetStyle(e.target);
+            }
+
+            function onEachFeature(feature, layer) {
+                layer.on({
+                    mouseover: highlightFeature,
+                    mouseout: resetHighlight,
+                    click: function (e) {
+                        const county = feature.properties.name;
+                        const select = document.getElementById('county-select');
+                        for (let i = 0; i < select.options.length; i++) {
+                            if (normalizeString(select.options[i].text) === normalizeString(county)) {
+                                select.selectedIndex = i;
+                                loadCountyData(select.options[i].text);
+                                break;
+                            }
+                        }
+                        console.log(`Clicked county: ${county}`);
+                    }
+                });
+            }
+
+            function normalizeString(str) {
+                return str.toLowerCase()
+                    .replace(/ğ/g, 'g')
+                    .replace(/ü/g, 'u')
+                    .replace(/ş/g, 's')
+                    .replace(/ı/g, 'i')
+                    .replace(/ö/g, 'o')
+                    .replace(/ç/g, 'c');
+            }
+
+            // İlçe sınırlarını yükle ve eylemleri tanımla
+            fetch('/static/ilce.json')
+                .then(response => response.json())
+                .then(geojson => {
+                    geojsonLayer = L.geoJson(geojson, {
+                        style: function (feature) {
+                            return {
+                                color: "#005ea1",
+                                weight: 2,
+                                opacity: 1,
+                                fillOpacity: 0.1
+                            };
+                        },
+                        onEachFeature: onEachFeature
+                    }).addTo(map);
+                });
+
+
+
+
+function searchParks(query) {
+    fetch('/data')
+        .then(response => response.json())
+        .then(data => {
+            const filteredData = data.filter(row => 
+                row.ParkName.toLowerCase().includes(query.toLowerCase())
+            );
+            if (filteredData.length > 0) {
+                // Önce mevcut tüm markerları haritadan kaldır
+                markers.forEach(marker => map.removeLayer(marker));
+                markers = [];
+
+                addMarkers(filteredData); // Sadece filtrelenmiş markerları ekle
+                const bounds = filteredData.map(row => [row.Latitude, row.Longitude]);
+                map.fitBounds(bounds); // Haritayı filtrelenmiş markerlara odakla
+            } else {
+                alert('Sonuç bulunamadı.');
+            }
+        });
+}
+
+document.getElementById('search-btn').addEventListener('click', function() {
+    const query = document.getElementById('search-input').value.toLowerCase();
+    
+    if (query) {
+        searchParks(query); // Arama sorgusu varsa, parklara göre filtreleme yap
+    } else {
+        resetMarkers(); // Arama sorgusu yoksa, tüm markerları geri yükle
+    }
+});
+
+function resetMarkers() {
+    fetch('/data')
+        .then(response => response.json())
+        .then(data => {
+            markers.forEach(marker => map.removeLayer(marker)); // Eski markerları temizle
+            markers = [];
+            addMarkers(data); // Tüm markerları geri yükle
+        });
+}
+
+
+// Haritada başka bir işlem gerçekleştiğinde (zoom, hareket vs.) tüm markerları geri yükle
+
+ 
+                
+// En yakın İSPARK butonuna tıklama olayını dinle
+let nearestMarker;
+
+document.getElementById('nearest-ispark').addEventListener('click', function() {
+    if (!userMarker) {
+        alert("Lütfen önce konumunuzu bulun.");
+        console.log('User location is not defined.');
+        return;
+    }
+
+    fetch('/data')
+        .then(response => response.json())
+        .then(data => {
+            const userLocation = turf.point([userMarker.getLatLng().lng, userMarker.getLatLng().lat]);
+            let nearest = null;
+            let minDistance = Infinity;
+
+            data.forEach(row => {
+                const isparkLocation = turf.point([row.Longitude, row.Latitude]);
+                const distance = turf.distance(userLocation, isparkLocation, { units: 'kilometers' });
+                if (distance < minDistance) {
+                    nearest = row;
+                    minDistance = distance;
+                }
+            });
+
+            if (nearest) {
+                // Remove previous nearest marker if it exists
+                if (nearestMarker) {
+                    map.removeLayer(nearestMarker);
+                }
+
+                // Define a custom icon for the marker
+                const isparkIcon = L.icon({
+                    iconUrl: 'static/isparkmarker.png', // Replace with your custom icon path
+                    iconSize: [32, 32], // Adjust the size of the icon
+                    iconAnchor: [16, 32], // Anchor the icon so the point of the marker corresponds to the exact location
+                    popupAnchor: [0, -32] // Position the popup above the icon
+                });
+
+                // Add the marker with the custom icon
+                nearestMarker = L.marker([nearest.Latitude, nearest.Longitude], { icon: isparkIcon }).addTo(map);
+
+                // Popup ekle ve aç
+                nearestMarker.bindPopup(`
+                    <b>${nearest.ParkName}</b><br>${nearest.WorkHours}<br>${nearest.District}<br>
+                    <br><button class="route-btn" data-lat="${nearest.Latitude}" data-lng="${nearest.Longitude}">Yol Tarifi Al</button>
+                `).openPopup();
+
+                // Harita görünümünü en yakın İSPARK'a odakla
+                map.setView([nearest.Latitude, nearest.Longitude], 16);
+
+                // Mevcut rota kontrolünü sıfırla
+                if (routingControl) {
+                    map.removeControl(routingControl);
+                }
+
+                // Yeni rota kontrolünü başlat
+                routingControl = L.Routing.control({
+                    waypoints: [
+                        userMarker.getLatLng(),
+                        L.latLng(nearest.Latitude, nearest.Longitude)
+                    ],
+                    router: L.Routing.osrmv1({
+                        serviceUrl: 'https://router.project-osrm.org/route/v1'
+                    }),
+                    lineOptions: {
+                        styles: [{ color: 'blue', opacity: 0.6, weight: 6 }]
+                    },
+                    language: 'en',
+                    show: true,
+                    addWaypoints: false,
+                    createMarker: function() { return null; },
+                    routeWhileDragging: false,
+                    draggableWaypoints: false,
+                    formatter: new L.Routing.Formatter({
+                        language: 'en',
+                        units: 'metric',
+                        roundingSensitivity: 1
+                    })
+                }).addTo(map);
+
+                console.log('Routing control added for nearest ISpark.');
+                
+                // Rota ekranına bir çarpı (X) butonu ekle
+                addCloseButtonToRoutingContainer();
+            } else {
+                alert("Yakınınızda bir İspark bulunamadı.");
+            }
+        });
+});
+
+// Add event listener to the map to close the marker and its popup when clicking anywhere else
+map.on('click', function() {
+    if (nearestMarker) {
+        map.removeLayer(nearestMarker); // Remove the nearest marker from the map
+        nearestMarker = null; // Reset the marker variable
+    }
+});
+
+
+
+
+// Haritanın herhangi bir yerine tıklandığında rota kontrolünü iptal et
+map.on('click', function() {
+    if (routingControl) {
+        map.removeControl(routingControl);
+        routingControl = null;
+    }
+});
+
+
+
+            // Filtre butonuna tıklayınca ilçeye göre filtrele
+            document.getElementById('filter-btn').addEventListener('click', function() {
+                const county = document.getElementById('county-select').value;
+                if (county) {
+                    loadCountyData(county);
+                } else {
+                    loadAllData();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
