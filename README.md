@@ -25,7 +25,7 @@
 ![Ana Harita Ekranı](screenshots/AnaHaritaEkrani.png)
 ![İlçe Bazlı Harita Filtreleme](screenshots/IlceBazliHaritaFiltreleme.png)
 ![Otopark Listeleme ve Sorgulama](screenshots/OtoparkListelemeVeSorgulama.png)
-![Otoparka Rota](screenshots/OtoparkRota.png)
+![Otoparka Rota](screenshots/OtoparkaRota.png)
 ![Otoparka Rota-2](screenshots/OtoparkRota2.png)
 
 
