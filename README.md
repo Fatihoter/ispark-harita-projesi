@@ -21,16 +21,12 @@
 
 ## 📸 Uygulama Ekran Görüntüleri
 
-## 📸 Uygulama Ekran Görüntüleri
-
-## 📸 Uygulama Ekran Görüntüleri
-
-![Ana Ekran](/screenshots/Ana Ekran.png)
-![Ana Harita Ekranı](/screenshots/Ana Harita Ekranı.png)
-![İlçe Bazlı Harita Filtreleme](/screenshots/İlçe Bazlı Harita Filtreleme.png)
-![Otopark Listeleme ve Sorgulama](/screenshots/Otopark Listeleme ve Sorgulama.png)
-![Otoparka Rota](/screenshots/Otoparka Rota.png)
-![Otoparka Rota-2](/screenshots/Otoparka Rota-2.png)
+![Ana Ekran](screenshots/AnaEkran.png)
+![Ana Harita Ekranı](screenshots/AnaHaritaEkrani.png)
+![İlçe Bazlı Harita Filtreleme](screenshots/IlceBazliHaritaFiltreleme.png)
+![Otopark Listeleme ve Sorgulama](screenshots/OtoparkListelemeVeSorgulama.png)
+![Otoparka Rota](screenshots/OtoparkRota.png)
+![Otoparka Rota-2](screenshots/OtoparkRota2.png)
 
 
 ## 🌐 Veri Kaynağı
